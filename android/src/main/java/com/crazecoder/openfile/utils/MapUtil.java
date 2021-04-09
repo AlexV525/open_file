@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class MapUtil {
     public static Map<String, Object> createMap(int type, String message) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("type", type);
         map.put("message", message);
         return map;

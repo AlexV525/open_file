@@ -47,5 +47,8 @@
                     <!--android:resource="@xml/filepaths"-->
                     <!--tools:replace="android:resource" />-->
         <!--</provider>-->
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
     </application>
 </manifest>

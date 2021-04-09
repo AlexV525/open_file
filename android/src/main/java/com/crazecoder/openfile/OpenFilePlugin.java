@@ -29,7 +29,6 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,17 +63,6 @@ public class OpenFilePlugin implements MethodCallHandler
     private static final int REQUEST_CODE = 33432;
     private static final int RESULT_CODE = 0x12;
     private static final String TYPE_STRING_APK = "application/vnd.android.package-archive";
-
-    public static void registerWith(Registrar registrar) {
-        OpenFilePlugin plugin = new OpenFilePlugin();
-        plugin.activity = registrar.activity();
-        plugin.context = registrar.context();
-        plugin.channel = new MethodChannel(registrar.messenger(), "open_file");
-        plugin.channel.setMethodCallHandler(plugin);
-        registrar.addRequestPermissionsResultListener(plugin);
-        registrar.addActivityResultListener(plugin);
-    }
-
 
     private boolean hasPermission(String permission) {
         return ContextCompat.checkSelfPermission(activity, permission) == PermissionChecker.PERMISSION_GRANTED;
@@ -347,9 +335,9 @@ public class OpenFilePlugin implements MethodCallHandler
             openApkFile();
             return false;
         }
-        for (int i = 0; i < strings.length; i++) {
-            if (!hasPermission(strings[i])) {
-                result(-3, "Permission denied: " + strings[i]);
+        for (final String string : strings) {
+            if (!hasPermission(string)) {
+                result(-3, "Permission denied: " + string);
                 return false;
             }
         }
@@ -390,10 +378,8 @@ public class OpenFilePlugin implements MethodCallHandler
     }
 
     @Override
-    public void onAttachedToActivity(ActivityPluginBinding binding) {
-        channel =
-                new MethodChannel(
-                        flutterPluginBinding.getBinaryMessenger(), "open_file");
+    public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
+        channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "open_file");
         context = flutterPluginBinding.getApplicationContext();
         activity = binding.getActivity();
         channel.setMethodCallHandler(this);
